@@ -4,28 +4,25 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.android_engineer_technical_assignment.data.Movie
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun MovieItem(movie: Movie, modifier: Modifier = Modifier){
-    Card(
-        modifier = modifier
-            .padding(vertical = 16.dp)
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = movie.title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = movie.description,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+    Card(colors = CardDefaults.cardColors( containerColor = Color(0xFFD0BCFF)), modifier = modifier.padding(vertical = 25.dp).fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = movie.title,
+            )
+            Text(
+                text = movie.description,
+            )
+        }
     }
 }
 
@@ -38,4 +35,8 @@ fun MovieItemPreview() {
         description = "Description 1"
     )
     MovieItem(movie = movietest)
+
+    Android_Engineer_Technical_AssignmentTheme {
+        MovieItem(movie = movietest)
+    }
 }

@@ -20,14 +20,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import com.example.android_engineer_technical_assignment.data.Movie
 import com.example.android_engineer_technical_assignment.ui.components.MovieItem
-
+import androidx.compose.ui.graphics.Color
 // Train list to test
 val trainlist = listOf(
-    Movie("1", "examplepictureurl1", "description 1"),
-    Movie("2", "examplepictureurl2", "description 2"),
-    Movie("3", "examplepictureurl3", "description 3"),
-    Movie("4", "examplepictureurl4", "description 4"),
-    Movie("5", "examplepictureurl5", "description 5")
+    Movie("Tittle 1", "examplepictureurl1", "description 1"),
+    Movie("Tittle 2", "examplepictureurl2", "description 2"),
+    Movie("Tittle 3", "examplepictureurl3", "description 3"),
+    Movie("Tittle 4", "examplepictureurl4", "description 4"),
+    Movie("Tittle 5", "examplepictureurl5", "description 5")
 )
 
 class MainActivity : ComponentActivity() {
