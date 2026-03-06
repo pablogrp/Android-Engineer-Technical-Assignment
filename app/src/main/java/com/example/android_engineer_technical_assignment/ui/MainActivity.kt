@@ -1,4 +1,4 @@
-package com.example.android_engineer_technical_assignment
+package com.example.android_engineer_technical_assignment.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,12 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 import androidx.compose.ui.tooling.preview.Preview
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import com.example.android_engineer_technical_assignment.data.Movie
+import com.example.android_engineer_technical_assignment.ui.components.MovieItem
 
 // Train list to test
-val trainlist = listOf<Movie>(
+val trainlist = listOf(
     Movie("1", "examplepictureurl1", "description 1"),
     Movie("2", "examplepictureurl2", "description 2"),
     Movie("3", "examplepictureurl3", "description 3"),
@@ -62,25 +63,7 @@ fun MovieListPreview() {
 fun MovieList(modifier: Modifier = Modifier){
     LazyColumn(modifier = modifier.padding(24.dp)) {
         items(trainlist){ movie ->
-            Column(
-                modifier = Modifier
-                    .padding(vertical = 50.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = movie.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = movie.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    text = movie.picture
-                )
-            }
+            MovieItem(movie)
         }
     }
 }
