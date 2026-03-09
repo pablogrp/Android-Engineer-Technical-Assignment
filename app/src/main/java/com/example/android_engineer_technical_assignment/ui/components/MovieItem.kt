@@ -15,8 +15,24 @@ import coil.compose.AsyncImage
 import com.example.android_engineer_technical_assignment.data.Movie
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 
+@Preview(showBackground = true)
 @Composable
-fun MovieItem(movie: Movie, modifier: Modifier = Modifier) {
+fun MovieItemPreview() {
+    val movietest = Movie(
+        title = "Movie test",
+        posterpath = null,
+        overview = "This is a test overview."
+    )
+    Android_Engineer_Technical_AssignmentTheme {
+        MovieItem(
+            movie = movietest,
+            onSeeMoreClick = { }
+        )
+    }
+}
+
+@Composable
+fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFFD0BCFF)),
         modifier = modifier.padding(vertical = 8.dp, horizontal = 16.dp).fillMaxWidth()
@@ -26,40 +42,34 @@ fun MovieItem(movie: Movie, modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = movie.title ?: "Sin título",
+                text = movie.title ?: "No title available",
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = movie.overview ?: "Sin descripción disponible.",
+                text = movie.overview ?: "No overview available.",
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
-            if (movie.poster_path != null) {
-                val imageUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
+
+            if (movie.posterpath != null) {
+                val imageUrl = "https://image.tmdb.org/t/p/w500${movie.posterpath}"
                 AsyncImage(
                     model = imageUrl,
-                    contentDescription = "Póster de ${movie.title}",
+                    contentDescription = "${movie.title} poster",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp) // Altura de la imagen
+                        .height(225.dp)
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            Button(onClick = onSeeMoreClick) {
+                Text(text = "See more")
             }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MovieItemPreview() {
-    val movietest = Movie(
-        title = "Movie test",
-        poster_path = null,
-        overview = "overview."
-    )
-    Android_Engineer_Technical_AssignmentTheme {
-        MovieItem(movie = movietest)
-    }
-}

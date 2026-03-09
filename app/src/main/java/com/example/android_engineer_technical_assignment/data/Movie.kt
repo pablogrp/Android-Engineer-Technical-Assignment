@@ -7,6 +7,6 @@ import retrofit2.http.Query
 
 data class Movie (
     @SerializedName("title") val title: String?,
-    @SerializedName("poster_path") val poster_path: String?,
+    @SerializedName("poster_path") val posterpath: String?,
     @SerializedName("overview") val overview: String?
 )
