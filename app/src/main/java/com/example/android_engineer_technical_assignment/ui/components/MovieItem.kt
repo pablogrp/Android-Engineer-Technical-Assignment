@@ -1,5 +1,6 @@
 package com.example.android_engineer_technical_assignment.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -9,19 +10,89 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.android_engineer_technical_assignment.data.Movie
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Modifier) {
+    ElevatedCard(
+        onClick = onSeeMoreClick,
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (movie.posterpath != null) {
+                val imageUrl = "https://image.tmdb.org/t/p/w500${movie.posterpath}"
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "${movie.title} poster",
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(160.dp)
+                        .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(160.dp)
+                        .background(Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ){}
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = movie.title ?: "No title available",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = movie.overview ?: "No overview available.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Color de texto secundario
+                    maxLines = 3, // Máximo 3 líneas de descripción
+                    overflow = TextOverflow.Ellipsis,
+                    lineHeight = 20.sp
+                )
+            }
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun MovieItemPreview() {
     val movietest = Movie(
-        title = "Movie test",
+        title = "Movie",
         posterpath = null,
-        overview = "This is a test overview."
+        overview = "Movie Overview"
     )
     Android_Engineer_Technical_AssignmentTheme {
         MovieItem(
@@ -30,46 +101,3 @@ fun MovieItemPreview() {
         )
     }
 }
-
-@Composable
-fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFD0BCFF)),
-        modifier = modifier.padding(vertical = 8.dp, horizontal = 16.dp).fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = movie.title ?: "No title available",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = movie.overview ?: "No overview available.",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (movie.posterpath != null) {
-                val imageUrl = "https://image.tmdb.org/t/p/w500${movie.posterpath}"
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = "${movie.title} poster",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(225.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            Button(onClick = onSeeMoreClick) {
-                Text(text = "See more")
-            }
-        }
-    }
-}
-
