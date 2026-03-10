@@ -65,3 +65,4 @@ fun MovieScreen(navController: NavHostController, modifier: Modifier = Modifier)
         }
     }
 }
+

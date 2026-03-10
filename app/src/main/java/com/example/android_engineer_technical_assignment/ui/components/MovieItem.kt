@@ -76,8 +76,8 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
                 Text(
                     text = movie.overview ?: "No overview available.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Color de texto secundario
-                    maxLines = 3, // Máximo 3 líneas de descripción
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     lineHeight = 20.sp
                 )
