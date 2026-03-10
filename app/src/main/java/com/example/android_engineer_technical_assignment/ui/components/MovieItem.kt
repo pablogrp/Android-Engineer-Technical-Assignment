@@ -19,9 +19,18 @@ import coil.compose.AsyncImage
 import com.example.android_engineer_technical_assignment.data.Movie
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 
+/**
+ * UI function to display a movie card
+ *
+ * @param movie object from the data class Movie
+ * @param onSeeMoreClick Lambda function to select the movie
+ * @param modifier optional modifiers to be applied
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Modifier) {
+
+    // Experimental card which shows a shadow to give more volume
     ElevatedCard(
         onClick = onSeeMoreClick,
         modifier = modifier
@@ -33,10 +42,13 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
+
+        // Row direction to split in 2 different sides
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             if (movie.posterpath != null) {
                 val imageUrl = "https://image.tmdb.org/t/p/w500${movie.posterpath}"
                 AsyncImage(
@@ -48,6 +60,7 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
                         .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)),
                     contentScale = ContentScale.Crop
                 )
+            // If there's no picture we create a gray rectangle instead
             } else {
                 Box(
                     modifier = Modifier
@@ -58,6 +71,8 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
                 ){}
             }
 
+
+            // With the column we can split de card in 2
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -89,6 +104,8 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
 @Preview(showBackground = true)
 @Composable
 fun MovieItemPreview() {
+
+    // Example movie to see in the preview
     val movietest = Movie(
         title = "Movie",
         posterpath = null,
