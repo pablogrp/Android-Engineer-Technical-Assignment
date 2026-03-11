@@ -1,4 +1,4 @@
-package com.example.android_engineer_technical_assignment.screens
+package com.example.android_engineer_technical_assignment.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,16 +14,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.android_engineer_technical_assignment.data.Movie
 import com.example.android_engineer_technical_assignment.data.RetrofitClient
 import com.example.android_engineer_technical_assignment.ui.components.MovieItem
+import com.example.android_engineer_technical_assignment.ui.viewmodel.MovieViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 
 @Composable
-fun MovieScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun MovieScreen(navController: NavHostController, modifier: Modifier = Modifier, viewModel: MovieViewModel = viewModel()) {
+    val state = viewModel.uiState
     var movieList by remember { mutableStateOf<List<Movie>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }

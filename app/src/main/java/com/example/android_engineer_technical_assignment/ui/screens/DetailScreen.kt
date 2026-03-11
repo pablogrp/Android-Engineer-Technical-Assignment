@@ -1,4 +1,4 @@
-package com.example.android_engineer_technical_assignment.screens
+package com.example.android_engineer_technical_assignment.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.example.android_engineer_technical_assignment.ui
+package com.example.android_engineer_technical_assignment
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,8 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
-import com.example.android_engineer_technical_assignment.screens.DetailScreen
-import com.example.android_engineer_technical_assignment.screens.MovieScreen
+import com.example.android_engineer_technical_assignment.ui.screens.DetailScreen
+import com.example.android_engineer_technical_assignment.ui.screens.MovieScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -66,7 +66,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
