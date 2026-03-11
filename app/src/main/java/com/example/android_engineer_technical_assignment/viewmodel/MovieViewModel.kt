@@ -20,7 +20,7 @@ class MovieViewModel: ViewModel(){
     var uiState: MovieUiState by mutableStateOf(MovieUiState.Loading)
         private set
     init {
-        Log.d("MovieViewModel", "ViewModel its running")
+        //Log.d("MovieViewModel", "ViewModel its running")
         fetchMovies()
     }
     fun fetchMovies(){
