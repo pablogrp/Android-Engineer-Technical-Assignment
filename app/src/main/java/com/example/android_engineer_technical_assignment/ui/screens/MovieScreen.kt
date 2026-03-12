@@ -15,9 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.android_engineer_technical_assignment.ui.components.MovieItem
-import com.example.android_engineer_technical_assignment.ui.viewmodel.MovieUiState
-import com.example.android_engineer_technical_assignment.ui.viewmodel.MovieViewModel
-import com.example.android_engineer_technical_assignment.viewmodel.FavoriteViewModel
+import com.example.android_engineer_technical_assignment.viewmodel.MovieUiState
+import com.example.android_engineer_technical_assignment.viewmodel.MovieViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 

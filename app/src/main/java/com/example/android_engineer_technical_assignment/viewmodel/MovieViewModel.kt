@@ -1,4 +1,4 @@
-package com.example.android_engineer_technical_assignment.ui.viewmodel
+package com.example.android_engineer_technical_assignment.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -10,12 +10,16 @@ import com.example.android_engineer_technical_assignment.data.Movie
 import com.example.android_engineer_technical_assignment.data.RetrofitClient
 import kotlinx.coroutines.launch
 
+// Represent the different states
 sealed class MovieUiState{
     object Loading : MovieUiState() // Waiting until getting the data
     data class Success(val movies: List<Movie>) : MovieUiState() // Collected all the data
     data class Error(val errormesage: String): MovieUiState()
 }
 
+/**
+ * ViewModel that manages the obtainment of the movies from the API
+ */
 class MovieViewModel: ViewModel(){
     var uiState: MovieUiState by mutableStateOf(MovieUiState.Loading)
         private set
