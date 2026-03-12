@@ -17,31 +17,41 @@ import androidx.navigation.NavHostController
 import com.example.android_engineer_technical_assignment.ui.components.MovieItem
 import com.example.android_engineer_technical_assignment.ui.viewmodel.MovieUiState
 import com.example.android_engineer_technical_assignment.ui.viewmodel.MovieViewModel
+import com.example.android_engineer_technical_assignment.viewmodel.FavoriteViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+/**
+ * UI screen that shows the movies brought
+ *
+ * @param NavHostController navController, controller that allows to go to the Detail or the Favourite screen
+ * @param Modifier modifier
+ * @param MovieViewModel view, Manage the API call and the state
+ *
+ */
 @Composable
-fun MovieScreen(
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
-    viewModel: MovieViewModel = viewModel()
-) {
+fun MovieScreen(navController: NavHostController, modifier: Modifier = Modifier, viewModel: MovieViewModel = viewModel()) {
+
+    // Obtain the current state (loading, error or success)
     val state = viewModel.uiState
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
+
+            // Favourite botton
             FloatingActionButton(
                 onClick = { navController.navigate("favorites") },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = Color.Red // Corazón rojo para que se identifique rápido
+                contentColor = Color.Red
             ) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
-                    contentDescription = "Ver mis favoritos"
+                    contentDescription = "See my favourites"
                 )
             }
         }
+
     ) { innerPadding ->
         Box(
             modifier = Modifier

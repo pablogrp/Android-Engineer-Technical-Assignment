@@ -2,6 +2,7 @@ package com.example.android_engineer_technical_assignment.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,29 +22,38 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 
+/**
+ * UI screen that shows the details of the movies and allow the "favourite movie" management
+ *
+ * @param String title, name of the movie
+ * @param String posterPath, posterPath URL
+ * @param String overview, small description of the movie
+ * @param Boolean isFavourite, indicates if the movie is marked as favourite or not
+ * @param Unit onToggleFavourite, Callback when the favourite icon is touched
+ * @param Unit onBack, Callback to return to the main page
+ *
+ */
+
 @Composable
-fun DetailScreen(
-    title: String,
-    posterPath: String,
-    overview: String,
-    isFavorite: Boolean,
-    onToggleFavorite: () -> Unit,
-    onBack: () -> Unit
-) {
+fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite: Boolean, onToggleFavorite: () -> Unit, onBack: () -> Unit) {
     Scaffold { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(24.dp),
+                //.background(MaterialTheme.colorScheme.primaryContainer,RoundedCornerShape(16.dp))
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            // --- Title and icon section ---
             Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .weight(1f) // takes al the available space pushing the "Return" bottom to the end
+                    .verticalScroll(rememberScrollState()), // Scrollable in case of long overviews
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -59,7 +69,7 @@ fun DetailScreen(
                     IconButton(onClick = onToggleFavorite) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Añadir a favoritos",
+                            contentDescription = "Add to Favourites",
                             tint = if (isFavorite) Color.Red else Color.Gray
                         )
                     }
@@ -67,10 +77,10 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                // --- Poster section ---
                 if (posterPath != "null") {
                     val imageUrl = if (posterPath.startsWith("http")) posterPath
                     else "https://image.tmdb.org/t/p/w500/$posterPath"
-
                     AsyncImage(
                         model = imageUrl,
                         contentDescription = "Poster",
@@ -84,6 +94,8 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+
+                // --- Overview Section ---
                 Text(
                     text = overview,
                     modifier = Modifier
@@ -99,6 +111,7 @@ fun DetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // --- Return button section ---
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onBack

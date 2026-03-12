@@ -22,7 +22,7 @@ import com.example.android_engineer_technical_assignment.ui.theme.Android_Engine
 /**
  * UI function to display a movie card
  *
- * @param movie object from the data class Movie
+ * @param movie object with the main information of the movie
  * @param onSeeMoreClick Lambda function to select the movie
  * @param modifier optional modifiers to be applied
  */
