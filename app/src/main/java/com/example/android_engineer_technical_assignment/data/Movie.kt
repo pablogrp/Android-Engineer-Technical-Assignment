@@ -2,7 +2,7 @@ package com.example.android_engineer_technical_assignment.data
 import com.google.gson.annotations.SerializedName
 
 /**
-* Data class with all the atributes for the movie class
+* Data class with all the properties for the movie class
 * @property title
 * @property posterpath, url with the movie poster.
 * @property overview
