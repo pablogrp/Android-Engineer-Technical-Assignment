@@ -1,17 +1,19 @@
 package com.example.android_engineer_technical_assignment.ui.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.android_engineer_technical_assignment.ui.components.MovieItem
@@ -23,22 +25,28 @@ import java.nio.charset.StandardCharsets
 /**
  * UI screen that shows the movies brought
  *
- * @param NavHostController navController, controller that allows to go to the Detail or the Favourite screen
- * @param Modifier modifier
- * @param MovieViewModel view, Manage the API call and the state
- *
+ * @param navController controller that allows to go to the Detail or the Favourite screen
+ * @param modifier
+ * @param viewModel Manage the API call and the state
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieScreen(navController: NavHostController, modifier: Modifier = Modifier, viewModel: MovieViewModel = viewModel()) {
+fun MovieScreen(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    viewModel: MovieViewModel = viewModel()
+) {
 
     // Obtain the current state (loading, error or success)
     val state = viewModel.uiState
+    // Obtain the search query from the ViewModel
+    val searchQuery = viewModel.searchQuery
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
 
-            // Favourite botton
+            // Favourite button
             FloatingActionButton(
                 onClick = { navController.navigate("favorites") },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -52,38 +60,75 @@ fun MovieScreen(navController: NavHostController, modifier: Modifier = Modifier,
         }
 
     ) { innerPadding ->
-        Box(
+        // We use a Column to stack the Search Bar and the Content
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
+                .padding(innerPadding)
         ) {
-            when (state) {
-                is MovieUiState.Loading -> {
-                    CircularProgressIndicator()
-                }
-                is MovieUiState.Error -> {
-                    Text(text = "Error: ${state.errormesage}")
-                }
-                is MovieUiState.Success -> {
-                    val movieList = state.movies
-                    if (movieList.isEmpty()) {
-                        Text(text = "No movie data available.")
-                    } else {
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            items(movieList) { currentMovie ->
-                                MovieItem(
-                                    movie = currentMovie,
-                                    onSeeMoreClick = {
-                                        val cleanPoster = currentMovie.posterpath?.removePrefix("/") ?: "null"
-                                        val encodedOverview = URLEncoder.encode(
-                                            currentMovie.overview ?: "No description",
-                                            StandardCharsets.UTF_8.toString()
-                                        )
 
-                                        navController.navigate("more_info/${currentMovie.title}/$cleanPoster/$encodedOverview")
-                                    }
-                                )
+            // Search Bar Implementation
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { viewModel.onSearchQueryChange(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                placeholder = { Text(text = "Search by name...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Clear search")
+                        }
+                    }
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = Color.Gray
+                )
+            )
+
+            // Main Content Area
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                when (state) {
+                    is MovieUiState.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is MovieUiState.Error -> {
+                        Text(text = "Error: ${state.errormesage}")
+                    }
+                    is MovieUiState.Success -> {
+                        val movieList = state.movies
+                        if (movieList.isEmpty()) {
+                            // Professional feedback when no results are found
+                            Text(
+                                text = if (searchQuery.isEmpty()) "No movie data available."
+                                else "No results found for '$searchQuery'"
+                            )
+                        } else {
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                items(movieList) { currentMovie ->
+                                    MovieItem(
+                                        movie = currentMovie,
+                                        onSeeMoreClick = {
+                                            val cleanPoster = currentMovie.posterpath?.removePrefix("/") ?: "null"
+                                            val encodedOverview = URLEncoder.encode(
+                                                currentMovie.overview ?: "No description",
+                                                StandardCharsets.UTF_8.toString()
+                                            )
+
+                                            navController.navigate("more_info/${currentMovie.title}/$cleanPoster/$encodedOverview")
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
