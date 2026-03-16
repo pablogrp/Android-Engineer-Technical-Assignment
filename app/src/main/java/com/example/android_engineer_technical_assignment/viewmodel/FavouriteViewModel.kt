@@ -2,7 +2,7 @@ package com.example.android_engineer_technical_assignment.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.android_engineer_technical_assignment.data.FavoriteMovie
+import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
 import com.example.android_engineer_technical_assignment.data.MovieDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted

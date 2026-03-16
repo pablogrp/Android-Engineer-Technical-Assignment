@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.android_engineer_technical_assignment.data.Movie
+import com.example.android_engineer_technical_assignment.data.DB.Movie
 import com.example.android_engineer_technical_assignment.data.RetrofitClient
 import kotlinx.coroutines.launch
 

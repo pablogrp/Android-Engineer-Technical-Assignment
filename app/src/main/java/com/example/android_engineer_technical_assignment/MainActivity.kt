@@ -18,7 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.android_engineer_technical_assignment.data.AppDatabase
-import com.example.android_engineer_technical_assignment.data.FavoriteMovie
+import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
 import com.example.android_engineer_technical_assignment.ui.screens.DetailScreen
 import com.example.android_engineer_technical_assignment.ui.screens.FavoritesScreen
 import com.example.android_engineer_technical_assignment.ui.screens.MovieScreen
@@ -35,7 +35,8 @@ class MainActivity : ComponentActivity() {
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "favorites-db"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
 
         val favoriteViewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

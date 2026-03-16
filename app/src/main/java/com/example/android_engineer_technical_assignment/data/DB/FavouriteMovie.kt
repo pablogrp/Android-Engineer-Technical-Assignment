@@ -1,4 +1,4 @@
-package com.example.android_engineer_technical_assignment.data
+package com.example.android_engineer_technical_assignment.data.DB
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
