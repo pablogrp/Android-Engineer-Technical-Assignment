@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_engineer_technical_assignment.data.DB.Movie
-import com.example.android_engineer_technical_assignment.data.RetrofitClient
+import com.example.android_engineer_technical_assignment.repository.MovieRepository
 import kotlinx.coroutines.launch
 
 // Represent the different states
@@ -18,10 +18,10 @@ sealed class MovieUiState {
 }
 
 /**
- * ViewModel that manages the obtainment of the movies from the API
- * and handles the search filtering logic.
+ * ViewModel that manages the obtainment of the movies from the repository
+ * and search filtering logic.
  */
-class MovieViewModel : ViewModel() {
+class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
 
     // Main UI state that the Screen observes
     var uiState: MovieUiState by mutableStateOf(MovieUiState.Loading)
@@ -35,50 +35,64 @@ class MovieViewModel : ViewModel() {
     private var allMovies: List<Movie> = emptyList()
 
     init {
+        observeMovies()
         fetchMovies()
     }
 
     /**
-     * Fetch the popular movies from the remote API
+     * Observes the movies flow from the repository.
+     * The UI will automatically update whenever the database changes.
+     */
+    private fun observeMovies() {
+        viewModelScope.launch {
+            repository.getMovies().collect { moviesFromDb ->
+                allMovies = moviesFromDb
+                applyFilter()
+            }
+        }
+    }
+
+    /**
+     * Triggers a refresh of the movie data from the remote source.
      */
     fun fetchMovies() {
         viewModelScope.launch {
-            uiState = MovieUiState.Loading
             try {
-                val response = RetrofitClient.apiService.getMovies()
-                val movies = response.results
-
-                // Store the original result in our cache
-                allMovies = movies
-
-                Log.d("MovieViewModel", "Fetched ${movies.size} movies successfully")
-                uiState = MovieUiState.Success(movies)
+                repository.refreshMovies()
+                Log.d("MovieViewModel", "Movies refreshed successfully")
             } catch (e: Exception) {
-                Log.e("MovieViewModel", "Error fetching movies", e)
-                uiState = MovieUiState.Error(e.localizedMessage ?: "Error")
+                Log.e("MovieViewModel", "Error refreshing movies", e)
+                // If we have no data at all and the refresh fails, show error
+                if (allMovies.isEmpty()) {
+                    uiState = MovieUiState.Error(e.localizedMessage ?: "Error")
+                }
             }
         }
     }
 
     /**
      * Updates the search query and filters the list in real-time.
-     * * @param newQuery The text to filter movie titles.
+     * @param newQuery The text to filter movie titles.
      */
     fun onSearchQueryChange(newQuery: String) {
         searchQuery = newQuery
+        applyFilter()
+    }
 
-        // Filter from the cached 'allMovies' to ensure we don't lose data
-        if (allMovies.isNotEmpty()) {
-            val filteredList = if (newQuery.isEmpty()) {
-                allMovies
-            } else {
-                allMovies.filter { movie ->
-                    // Null-safe check for the title using safe call and comparison
-                    movie.title?.contains(newQuery, ignoreCase = true) == true
-                }
+    /**
+     * Applies the search filter to the current list of movies.
+     */
+    private fun applyFilter() {
+        // If still loading and no movies yet, keep the loading state
+        if (allMovies.isEmpty() && uiState is MovieUiState.Loading) return
+
+        val filteredList = if (searchQuery.isEmpty()) {
+            allMovies
+        } else {
+            allMovies.filter { movie ->
+                movie.title.contains(searchQuery, ignoreCase = true)
             }
-            // Update the UI state with the filtered result
-            uiState = MovieUiState.Success(filteredList)
         }
+        uiState = MovieUiState.Success(filteredList)
     }
 }

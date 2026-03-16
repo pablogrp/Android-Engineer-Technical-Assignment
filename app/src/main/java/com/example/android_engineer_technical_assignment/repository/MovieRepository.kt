@@ -15,8 +15,12 @@ class MovieRepositoryImpl(private val apiService: MovieService, private val movi
 
     override suspend fun getMovies(): Flow<List<Movie>> = moviedao.getAllMovies()
 
-
     override suspend fun refreshMovies(){
-        TODO("Not yet implemented")
+        try {
+            val allMovies = apiService.getMovies().results
+            moviedao.insertAll(allMovies)
+        } catch (e: Exception){
+            Log.e("MovieRepository", "Error fetching movies", e)
+        }
     }
 }

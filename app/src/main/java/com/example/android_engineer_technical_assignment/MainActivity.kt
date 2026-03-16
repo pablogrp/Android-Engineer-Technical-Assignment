@@ -32,10 +32,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //val movie_bd = Room.databaseBuilder(
+        //    applicationContext,
+        //    AppDatabase::class.java, "movies-db")
+        //    .fallbackToDestructiveMigration(false).build()
+
         val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "favorites-db"
-        ).fallbackToDestructiveMigration()
+                applicationContext,
+                AppDatabase::class.java, "favorites-db"
+            ).fallbackToDestructiveMigration(false)
             .build()
 
         val favoriteViewModelFactory = object : ViewModelProvider.Factory {
