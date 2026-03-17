@@ -2,11 +2,12 @@ package com.example.android_engineer_technical_assignment.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import android.R.attr.navigationIcon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
@@ -36,37 +37,28 @@ import com.example.android_engineer_technical_assignment.ui.theme.Android_Engine
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite: Boolean, onToggleFavorite: () -> Unit) {
-    Scaffold { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(24.dp),
-                //.background(MaterialTheme.colorScheme.primaryContainer,RoundedCornerShape(16.dp))
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite: Boolean, onToggleFavorite: () -> Unit,onBack: () -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowLeft,
+                            contentDescription = "Return"
+                        )
+                    }
+                },
 
-            // --- Title and icon section ---
-            Column(
-                modifier = Modifier
-                    .weight(1f) // takes al the available space pushing the "Return" bottom to the end
-                    .verticalScroll(rememberScrollState()), // Scrollable in case of long overviews
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
+                title = {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.headlineLarge,
-                        modifier = Modifier.fillMaxWidth(0.8f),
+                        style = MaterialTheme.typography.headlineSmall, // Letra un poco más pequeña para que quepa bien
                         textAlign = TextAlign.Center
                     )
+                },
 
+                actions = {
                     IconButton(onClick = onToggleFavorite) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -75,40 +67,51 @@ fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite
                         )
                     }
                 }
+            )
+        }
+    ) { padding ->
+        // --- Title and icon section ---
+        Column(
+            modifier = Modifier
+                .fillMaxSize() // takes al the available space pushing the "Return" bottom to the end
+                .padding(padding) // Añadido para que no se solape con la TopBar
+                .padding(horizontal = 16.dp) // Un poco de aire a los lados
+                .verticalScroll(rememberScrollState()), // Scrollable in case of long overviews
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-                // --- Poster section ---
-                if (posterPath != "null") {
-                    val imageUrl = if (posterPath.startsWith("http")) posterPath
-                    else "https://image.tmdb.org/t/p/w500/$posterPath"
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = "Poster",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(450.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-
-                // --- Overview Section ---
-                Text(
-                    text = overview,
+            // --- Poster section ---
+            if (posterPath != "null") {
+                val imageUrl = if (posterPath.startsWith("http")) posterPath
+                else "https://image.tmdb.org/t/p/w500/$posterPath"
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "Poster",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
+                        .height(450.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    contentScale = ContentScale.Crop
                 )
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+
+            // --- Overview Section ---
+            Text(
+                text = overview,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        RoundedCornerShape(16.dp)
+                    )
+                    .padding(16.dp),
+                style = MaterialTheme.typography.bodyLarge
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -125,7 +128,7 @@ fun DetailScreenPreview() {
             overview = "Example movie overview",
             isFavorite = false,
             onToggleFavorite = {},
-            //onBack = {}
+            onBack = {}
         )
     }
 }
