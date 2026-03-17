@@ -29,6 +29,12 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(movies: List<Movie>)
 
+    /**
+     * Clear the cache
+     */
+    @Query("DELETE FROM movies")
+    suspend fun deleteAllMovies()
+
 
     /**
      * Get all the movies marked as favourites

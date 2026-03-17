@@ -33,10 +33,11 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
 
     // Internal cache to keep the original list for filtering
     private var allMovies: List<Movie> = emptyList()
-
+    private var currentPage = 1;
+    private var isFechingMore = false
     init {
         observeMovies()
-        fetchMovies()
+        fetchMovies(currentPage)
     }
 
     /**
@@ -55,10 +56,11 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
     /**
      * Triggers a refresh of the movie data from the remote source.
      */
-    fun fetchMovies() {
+    fun fetchMovies(page: Int) {
         viewModelScope.launch {
             try {
-                repository.refreshMovies()
+                isFechingMore = true
+                repository.refreshMovies(page)
                 Log.d("MovieViewModel", "Movies refreshed successfully")
             } catch (e: Exception) {
                 Log.e("MovieViewModel", "Error refreshing movies", e)
@@ -67,6 +69,14 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
                     uiState = MovieUiState.Error(e.localizedMessage ?: "Error")
                 }
             }
+            isFechingMore = false
+        }
+    }
+
+    fun loadNextPage(){
+        if (!isFechingMore){
+            currentPage++
+            fetchMovies(currentPage)
         }
     }
 

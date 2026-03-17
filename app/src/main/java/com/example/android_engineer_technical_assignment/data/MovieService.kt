@@ -17,8 +17,9 @@ interface MovieService {
      * @param apiKey, key to access the API
      * @return [MovieResponse], object that contains the array of the movies
      */
-    @GET("movie/popular")
-    suspend fun getMovies(@Query("api_key") apiKey: String = Constant.API_KEY): MovieResponse
+    @GET("movie/top_rated")
+    suspend fun getMovies(@Query("api_key") apiKey: String = Constant.API_KEY,
+                          @Query("page") page: Int):MovieResponse // Get the pages of the api
 }
 
 /**
