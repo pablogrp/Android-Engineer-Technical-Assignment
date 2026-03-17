@@ -34,8 +34,9 @@ import com.example.android_engineer_technical_assignment.ui.theme.Android_Engine
  *
  */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite: Boolean, onToggleFavorite: () -> Unit, onBack: () -> Unit) {
+fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite: Boolean, onToggleFavorite: () -> Unit) {
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -110,14 +111,6 @@ fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // --- Return button section ---
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onBack
-            ) {
-                Text(text = "Return")
-            }
         }
     }
 }
@@ -132,7 +125,7 @@ fun DetailScreenPreview() {
             overview = "Example movie overview",
             isFavorite = false,
             onToggleFavorite = {},
-            onBack = {}
+            //onBack = {}
         )
     }
 }

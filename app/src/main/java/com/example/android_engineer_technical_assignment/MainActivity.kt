@@ -19,11 +19,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.android_engineer_technical_assignment.data.AppDatabase
 import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
+import com.example.android_engineer_technical_assignment.data.RetrofitClient
+import com.example.android_engineer_technical_assignment.repository.MovieRepositoryImpl
 import com.example.android_engineer_technical_assignment.ui.screens.DetailScreen
 import com.example.android_engineer_technical_assignment.ui.screens.FavoritesScreen
 import com.example.android_engineer_technical_assignment.ui.screens.MovieScreen
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 import com.example.android_engineer_technical_assignment.viewmodel.FavoriteViewModel
+import com.example.android_engineer_technical_assignment.viewmodel.MovieViewModel
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -32,20 +35,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //val movie_bd = Room.databaseBuilder(
-        //    applicationContext,
-        //    AppDatabase::class.java, "movies-db")
-        //    .fallbackToDestructiveMigration(false).build()
-
+        // Build the database and the repository
         val db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "favorites-db"
-            ).fallbackToDestructiveMigration(false)
+            applicationContext,
+            AppDatabase::class.java, "favorites-db"
+        ).fallbackToDestructiveMigration(false)
             .build()
 
-        val favoriteViewModelFactory = object : ViewModelProvider.Factory {
+        val movieRepository = MovieRepositoryImpl(RetrofitClient.apiService, db.movieDao())
+
+        val viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return FavoriteViewModel(db.movieDao()) as T
+                return when {
+                    modelClass.isAssignableFrom(FavoriteViewModel::class.java) -> {
+                        FavoriteViewModel(db.movieDao()) as T
+                    }
+                    modelClass.isAssignableFrom(MovieViewModel::class.java) -> {
+                        MovieViewModel(movieRepository) as T
+                    }
+                    else -> throw IllegalArgumentException("Unknown ViewModel class")
+                }
             }
         }
 
@@ -54,14 +63,20 @@ class MainActivity : ComponentActivity() {
             Android_Engineer_Technical_AssignmentTheme {
                 val navController = rememberNavController()
 
-                val favoriteViewModel: FavoriteViewModel = viewModel(factory = favoriteViewModelFactory)
+                val favoriteViewModel: FavoriteViewModel = viewModel(factory = viewModelFactory)
+                val movieViewModel: MovieViewModel = viewModel(factory = viewModelFactory)
+
                 val favorites by favoriteViewModel.favoriteMovies.collectAsState()
 
                 NavHost(navController = navController, startDestination = "movie_list") {
 
                     composable("movie_list") {
                         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                            MovieScreen(navController = navController, modifier = Modifier.padding(innerPadding))
+                            MovieScreen(
+                                navController = navController,
+                                modifier = Modifier.padding(innerPadding),
+                                viewModel = movieViewModel
+                            )
                         }
                     }
 
@@ -82,7 +97,7 @@ class MainActivity : ComponentActivity() {
                                 val movie = FavoriteMovie(title, poster, cleanOverview)
                                 favoriteViewModel.toggleFavorite(movie)
                             },
-                            onBack = { navController.popBackStack() }
+                            //onBack = { navController.popBackStack() }
                         )
                     }
 

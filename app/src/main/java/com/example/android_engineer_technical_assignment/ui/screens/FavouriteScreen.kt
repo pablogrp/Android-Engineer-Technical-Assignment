@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowLeft
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,7 +39,6 @@ import com.example.android_engineer_technical_assignment.viewmodel.FavoriteViewM
 fun FavoritesScreen(viewModel: FavoriteViewModel, onMovieClick: (FavoriteMovie) -> Unit, onBack: () -> Unit) {
 
     val favorites by viewModel.favoriteMovies.collectAsState()
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -47,7 +46,7 @@ fun FavoritesScreen(viewModel: FavoriteViewModel, onMovieClick: (FavoriteMovie) 
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.Default.ArrowLeft,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowLeft,
                             contentDescription = "Return"
                         )
                     }
