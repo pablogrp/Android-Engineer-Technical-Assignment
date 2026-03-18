@@ -3,6 +3,9 @@ package com.example.android_engineer_technical_assignment.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,17 +23,24 @@ import com.example.android_engineer_technical_assignment.data.DB.Movie
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 
 /**
- * UI function to display a movie card
+ * UI function to display a movie card with Favorite toggle
  *
  * @param movie object with the main information of the movie
+ * @param isFavorite whether the movie is marked as favorite
  * @param onSeeMoreClick Lambda function to select the movie
+ * @param onFavoriteClick Lambda function to toggle favorite
  * @param modifier optional modifiers to be applied
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Modifier) {
+fun MovieItem(
+    movie: Movie,
+    isFavorite: Boolean,
+    onSeeMoreClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
 
-    // Experimental card which shows a shadow to give more volume
     ElevatedCard(
         onClick = onSeeMoreClick,
         modifier = modifier
@@ -43,7 +53,6 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
         shape = RoundedCornerShape(16.dp)
     ) {
 
-        // Row direction to split in 2 different sides
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -60,7 +69,6 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
                         .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)),
                     contentScale = ContentScale.Crop
                 )
-            // If there's no picture we create a gray rectangle instead
             } else {
                 Box(
                     modifier = Modifier
@@ -71,20 +79,33 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
                 ){}
             }
 
-
-            // With the column we can split de card in 2
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                Text(
-                    text = movie.title ?: "No title available",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = movie.title ?: "No title available",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    IconButton(onClick = onFavoriteClick) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = if (isFavorite) Color.Red else Color.Gray
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -104,8 +125,6 @@ fun MovieItem(movie: Movie, onSeeMoreClick: () -> Unit, modifier: Modifier = Mod
 @Preview(showBackground = true)
 @Composable
 fun MovieItemPreview() {
-
-    // Example movie to see in the preview
     val movietest = Movie(
         title = "Movie",
         posterpath = null,
@@ -114,7 +133,9 @@ fun MovieItemPreview() {
     Android_Engineer_Technical_AssignmentTheme {
         MovieItem(
             movie = movietest,
-            onSeeMoreClick = { }
+            isFavorite = true,
+            onSeeMoreClick = { },
+            onFavoriteClick = { }
         )
     }
 }

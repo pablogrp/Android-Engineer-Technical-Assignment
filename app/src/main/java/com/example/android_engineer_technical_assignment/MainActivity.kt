@@ -75,7 +75,8 @@ class MainActivity : ComponentActivity() {
                             MovieScreen(
                                 navController = navController,
                                 modifier = Modifier.padding(innerPadding),
-                                viewModel = movieViewModel
+                                movieViewModel = movieViewModel,
+                                favoriteViewModel = favoriteViewModel
                             )
                         }
                     }
