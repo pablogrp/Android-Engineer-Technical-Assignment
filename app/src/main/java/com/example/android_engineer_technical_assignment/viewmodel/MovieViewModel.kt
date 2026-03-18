@@ -73,6 +73,9 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
         }
     }
 
+    /**
+     * Change the page and fetch the next page of movies.
+     */
     fun loadNextPage(){
         if (!isFechingMore){
             currentPage++
@@ -96,7 +99,7 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
         // If still loading and no movies yet, keep the loading state
         if (allMovies.isEmpty() && uiState is MovieUiState.Loading) return
 
-        val filteredList = if (searchQuery.isEmpty()) {
+        val filteredList = if (searchQuery.length < 2) {
             allMovies
         } else {
             allMovies.filter { movie ->

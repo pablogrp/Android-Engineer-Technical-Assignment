@@ -40,7 +40,7 @@ fun MovieScreen(
     val state = movieViewModel.uiState
     val searchQuery = movieViewModel.searchQuery
     val favorites by favoriteViewModel.favoriteMovies.collectAsState()
-    val listState = rememberLazyListState()
+    val listState = rememberLazyListState() // to remember which scroll position is the user on
 
     val isAtEnd = remember {
         derivedStateOf {
@@ -50,11 +50,12 @@ fun MovieScreen(
                 false
             } else {
                 val lastVisibleItem = visibleItemsInfo.lastOrNull()
-                (lastVisibleItem?.index ?: 0) >= (layoutInfo.totalItemsCount - 5)
+                (lastVisibleItem?.index ?: 0) >= (layoutInfo.totalItemsCount - 5) // change page if the user is in the last 5 movies of the current page
             }
         }
     }
 
+    // when the user is on the last 5 movies, load the next page
     LaunchedEffect(isAtEnd.value) {
         if (isAtEnd.value && searchQuery.isEmpty()) {
             movieViewModel.loadNextPage()

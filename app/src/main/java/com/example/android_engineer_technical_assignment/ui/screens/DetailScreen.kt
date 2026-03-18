@@ -74,8 +74,8 @@ fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite
         Column(
             modifier = Modifier
                 .fillMaxSize() // takes al the available space pushing the "Return" bottom to the end
-                .padding(padding) // Añadido para que no se solape con la TopBar
-                .padding(horizontal = 16.dp) // Un poco de aire a los lados
+                .padding(padding)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()), // Scrollable in case of long overviews
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
