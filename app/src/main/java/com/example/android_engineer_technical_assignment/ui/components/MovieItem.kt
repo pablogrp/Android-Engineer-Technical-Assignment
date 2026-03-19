@@ -109,7 +109,7 @@ fun MovieItem(
 
                     IconButton(onClick = onFavoriteClick) {
                         val scale by animateFloatAsState(
-                            targetValue = if (isFavorite) 1.3f else 1.0f,
+                            targetValue = if (isFavorite) 1.4f else 1.0f,
                             animationSpec = spring(
                                 dampingRatio = Spring.DampingRatioMediumBouncy,
                                 stiffness = Spring.StiffnessLow
