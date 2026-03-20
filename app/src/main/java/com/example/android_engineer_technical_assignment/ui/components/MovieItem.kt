@@ -1,11 +1,8 @@
 package com.example.android_engineer_technical_assignment.ui.components
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
-import androidx.compose.runtime.getValue
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,9 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +44,7 @@ fun MovieItem(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showDialog by remember { mutableStateOf(false) }
 
     ElevatedCard(
         onClick = onSeeMoreClick,
@@ -61,6 +57,14 @@ fun MovieItem(
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
+        FavoriteConfirmationDialog(
+            show = showDialog,
+            onConfirm = {
+                onFavoriteClick()
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -107,7 +111,7 @@ fun MovieItem(
                         modifier = Modifier.weight(1f)
                     )
 
-                    IconButton(onClick = onFavoriteClick) {
+                    IconButton(onClick = { showDialog = true }) {
                         val scale by animateFloatAsState(
                             targetValue = if (isFavorite) 1.4f else 1.0f,
                             animationSpec = spring(
@@ -140,6 +144,35 @@ fun MovieItem(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun FavoriteConfirmationDialog(
+    show: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("Decline", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            title = {
+                Text(text = "Confirmation")
+            },
+            text = {
+                Text(text = "Are you sure you want to add/remove this movie to/from favorites?")
+            }
+        )
     }
 }
 

@@ -12,6 +12,10 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.android_engineer_technical_assignment.ui.components.FavoriteConfirmationDialog
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 
 /**
@@ -37,7 +42,24 @@ import com.example.android_engineer_technical_assignment.ui.theme.Android_Engine
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite: Boolean, onToggleFavorite: () -> Unit,onBack: () -> Unit) {
+fun DetailScreen(title: String,
+                 posterPath: String,
+                 overview: String,
+                 isFavorite: Boolean,
+                 onToggleFavorite: () -> Unit,
+                 onBack: () -> Unit,
+                 onFavoriteClick: () -> Unit) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    FavoriteConfirmationDialog(
+        show = showDialog,
+        onConfirm = {
+            onFavoriteClick()
+            showDialog = false
+        },
+        onDismiss = { showDialog = false }
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,7 +81,7 @@ fun DetailScreen(title: String, posterPath: String, overview: String, isFavorite
                 },
 
                 actions = {
-                    IconButton(onClick = onToggleFavorite) {
+                    IconButton(onClick = { showDialog = true}) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Add to Favourites",
@@ -128,7 +150,8 @@ fun DetailScreenPreview() {
             overview = "Example movie overview",
             isFavorite = false,
             onToggleFavorite = {},
-            onBack = {}
+            onBack = {},
+            onFavoriteClick = {}
         )
     }
 }

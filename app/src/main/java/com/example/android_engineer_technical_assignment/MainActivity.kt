@@ -98,7 +98,11 @@ class MainActivity : ComponentActivity() {
                                 val movie = FavoriteMovie(title, poster, cleanOverview)
                                 favoriteViewModel.toggleFavorite(movie)
                             },
-                            onBack = { navController.popBackStack() }
+                            onBack = { navController.popBackStack() },
+                            onFavoriteClick = {
+                                val movie = FavoriteMovie(title, poster, cleanOverview)
+                                favoriteViewModel.toggleFavorite(movie)
+                            }
                         )
                     }
 
