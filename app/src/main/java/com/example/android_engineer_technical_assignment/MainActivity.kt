@@ -36,10 +36,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Build the database and the repository
+        // Set fallbackToDestructiveMigration(true) to avoid crashes on schema changes
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "favorites-db"
-        ).fallbackToDestructiveMigration(false)
+        ).fallbackToDestructiveMigration(true)
             .build()
 
         val movieRepository = MovieRepositoryImpl(RetrofitClient.apiService, db.movieDao())
@@ -82,7 +83,8 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("more_info/{title}/{poster}/{overview}") { backStackEntry ->
-                        val title = backStackEntry.arguments?.getString("title") ?: "No title"
+                        val rawTitle = backStackEntry.arguments?.getString("title") ?: "No title"
+                        val title = URLDecoder.decode(rawTitle, StandardCharsets.UTF_8.toString())
                         val poster = backStackEntry.arguments?.getString("poster") ?: ""
                         val rawOverview = backStackEntry.arguments?.getString("overview") ?: ""
                         val cleanOverview = URLDecoder.decode(rawOverview, StandardCharsets.UTF_8.toString())
@@ -110,8 +112,9 @@ class MainActivity : ComponentActivity() {
                         FavoritesScreen(
                             viewModel = favoriteViewModel,
                             onMovieClick = { movie ->
+                                val encodedTitle = URLEncoder.encode(movie.title, StandardCharsets.UTF_8.toString())
                                 val encodedOverview = URLEncoder.encode(movie.overview, StandardCharsets.UTF_8.toString())
-                                navController.navigate("more_info/${movie.title}/${movie.posterPath}/$encodedOverview")
+                                navController.navigate("more_info/$encodedTitle/${movie.posterPath}/$encodedOverview")
                             },
                             onBack = { navController.popBackStack() }
                         )

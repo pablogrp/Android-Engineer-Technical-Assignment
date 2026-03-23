@@ -33,8 +33,9 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
 
     // Internal cache to keep the original list for filtering
     private var allMovies: List<Movie> = emptyList()
-    private var currentPage = 1;
-    private var isFechingMore = false
+    private var currentPage = 1
+    private var isFetchingMore = false
+
     init {
         observeMovies()
         fetchMovies(currentPage)
@@ -47,6 +48,7 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
     private fun observeMovies() {
         viewModelScope.launch {
             repository.getMovies().collect { moviesFromDb ->
+                Log.d("MovieViewModel", "Observed ${moviesFromDb.size} movies from DB")
                 allMovies = moviesFromDb
                 applyFilter()
             }
@@ -57,19 +59,22 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
      * Triggers a refresh of the movie data from the remote source.
      */
     fun fetchMovies(page: Int) {
+        if (isFetchingMore && page > 1) return
+
+        isFetchingMore = true
         viewModelScope.launch {
             try {
-                isFechingMore = true
                 repository.refreshMovies(page)
-                Log.d("MovieViewModel", "Movies refreshed successfully")
+                Log.d("MovieViewModel", "Movies refreshed successfully for page $page")
             } catch (e: Exception) {
                 Log.e("MovieViewModel", "Error refreshing movies", e)
                 // If we have no data at all and the refresh fails, show error
                 if (allMovies.isEmpty()) {
-                    uiState = MovieUiState.Error(e.localizedMessage ?: "Error")
+                    uiState = MovieUiState.Error(e.localizedMessage ?: "Unknown Error")
                 }
+            } finally {
+                isFetchingMore = false
             }
-            isFechingMore = false
         }
     }
 
@@ -77,7 +82,7 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
      * Change the page and fetch the next page of movies.
      */
     fun loadNextPage(){
-        if (!isFechingMore){
+        if (!isFetchingMore && searchQuery.isEmpty()){
             currentPage++
             fetchMovies(currentPage)
         }
@@ -96,9 +101,6 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
      * Applies the search filter to the current list of movies.
      */
     private fun applyFilter() {
-        // If still loading and no movies yet, keep the loading state
-        if (allMovies.isEmpty() && uiState is MovieUiState.Loading) return
-
         val filteredList = if (searchQuery.length < 2) {
             allMovies
         } else {
@@ -106,6 +108,10 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
                 movie.title.contains(searchQuery, ignoreCase = true)
             }
         }
-        uiState = MovieUiState.Success(filteredList)
+
+        // If we have movies, we show them immediately
+        if (allMovies.isNotEmpty() || uiState !is MovieUiState.Loading) {
+            uiState = MovieUiState.Success(filteredList)
+        }
     }
 }

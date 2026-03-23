@@ -3,6 +3,7 @@ package com.example.android_engineer_technical_assignment.repository
 import com.example.android_engineer_technical_assignment.data.DB.Movie
 import com.example.android_engineer_technical_assignment.data.MovieDao
 import com.example.android_engineer_technical_assignment.data.MovieService
+import com.example.android_engineer_technical_assignment.data.Constant
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 
@@ -35,17 +36,21 @@ class MovieRepositoryImpl(private val apiService: MovieService, private val movi
      */
     override suspend fun refreshMovies(page: Int){
         try {
-            val response = apiService.getMovies(page = page)
+            // Explicitly passing the API KEY to ensure it is sent correctly
+            val response = apiService.getMovies(apiKey = Constant.API_KEY, page = page)
             val allMovies = response.results
 
-            // Delete all the old movies to start from 0
+            Log.d("MovieRepository", "Fetched ${allMovies.size} movies from API (page $page)")
+
+            // Delete all the old movies to start from 0 only on first page
             if (page == 1) {
                 moviedao.deleteAllMovies()
             }
 
             moviedao.insertAll(allMovies)
         } catch (e: Exception){
-            Log.e("MovieRepository", "Error fetching movies", e)
+            Log.e("MovieRepository", "Error fetching movies from API", e)
+            throw e
         }
     }
 }

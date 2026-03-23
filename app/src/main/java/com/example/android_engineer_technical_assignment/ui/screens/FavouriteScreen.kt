@@ -127,6 +127,18 @@ fun FavoritesScreenPreview() {
         FavoriteMovie(title = "Movie 1", overview = "Example overview 1", posterPath = ""),
         FavoriteMovie(title = "Example mov0e 2", overview = "Example overview 2", posterPath = ""),
         FavoriteMovie(title = "Movie 3", overview = "Example overview 3", posterPath = ""),
+        FavoriteMovie(title = "Example movie 4 with ellipsis", overview = "Example overview 4", posterPath = ""),
+        FavoriteMovie(title = "Movie 1", overview = "Example overview 1", posterPath = ""),
+        FavoriteMovie(title = "Example mov0e 2", overview = "Example overview 2", posterPath = ""),
+        FavoriteMovie(title = "Movie 3", overview = "Example overview 3", posterPath = ""),
+        FavoriteMovie(title = "Example movie 4 with ellipsis", overview = "Example overview 4", posterPath = ""),
+        FavoriteMovie(title = "Movie 1", overview = "Example overview 1", posterPath = ""),
+        FavoriteMovie(title = "Example mov0e 2", overview = "Example overview 2", posterPath = ""),
+        FavoriteMovie(title = "Movie 3", overview = "Example overview 3", posterPath = ""),
+        FavoriteMovie(title = "Example movie 4 with ellipsis", overview = "Example overview 4", posterPath = ""),
+        FavoriteMovie(title = "Movie 1", overview = "Example overview 1", posterPath = ""),
+        FavoriteMovie(title = "Example mov0e 2", overview = "Example overview 2", posterPath = ""),
+        FavoriteMovie(title = "Movie 3", overview = "Example overview 3", posterPath = ""),
         FavoriteMovie(title = "Example movie 4 with ellipsis", overview = "Example overview 4", posterPath = "")
     )
 
