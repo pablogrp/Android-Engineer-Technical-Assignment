@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -90,14 +91,15 @@ fun FavoritesScreen(viewModel: FavoriteViewModel, onMovieClick: (FavoriteMovie) 
                     ) {
                         Column {
                             val imageUrl = if (movie.posterPath.startsWith("http")) movie.posterPath
-                            else "https://image.tmdb.org/t/p/w200/${movie.posterPath}"
+                            else "https://image.tmdb.org/t/p/w500/${movie.posterPath}"
 
                             AsyncImage(
                                 model = imageUrl,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(60.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
+                                    .fillMaxWidth()
+                                    .aspectRatio(2f / 3f)
+                                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                                 contentScale = ContentScale.Crop
                             )
                             Text(
@@ -116,6 +118,9 @@ fun FavoritesScreen(viewModel: FavoriteViewModel, onMovieClick: (FavoriteMovie) 
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, device = Devices.PHONE, name = "1. Phone / Fold Closed")
+@Preview(showBackground = true, device = Devices.FOLDABLE, name = "2. Fold Open")
+@Preview(showBackground = true, device = Devices.TABLET, name = "3. Tablet")
 @Composable
 fun FavoritesScreenPreview() {
     val mockFavorites = listOf(
