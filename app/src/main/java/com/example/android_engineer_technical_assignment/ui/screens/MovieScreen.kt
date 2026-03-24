@@ -143,6 +143,7 @@ fun MovieScreen(
                                 else "No results found for '$searchQuery'"
                             )
                         } else {
+                            // Lazy column to show the movies
                             LazyColumn(
                                 state = listState,
                                 modifier = Modifier.fillMaxSize()

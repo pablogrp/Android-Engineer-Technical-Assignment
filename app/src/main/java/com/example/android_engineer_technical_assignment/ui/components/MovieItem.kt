@@ -147,6 +147,12 @@ fun MovieItem(
     }
 }
 
+/**
+ * UI function to display a confirmation dialog
+ * @param show whether the dialog is shown
+ * @param onConfirm Lambda function to confirm the action
+ * @param onDismiss Lambda function to dismiss
+ */
 @Composable
 fun FavoriteConfirmationDialog(
     show: Boolean,

@@ -116,6 +116,8 @@ fun FavoritesScreen(viewModel: FavoriteViewModel, onMovieClick: (FavoriteMovie) 
         }
     }
 }
+
+// Different previews to see how the grid layout works on other sizes
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true, showSystemUi = true)
 @Preview(showBackground = true, device = Devices.PHONE, name = "1. Phone / Fold Closed")
@@ -123,6 +125,7 @@ fun FavoritesScreen(viewModel: FavoriteViewModel, onMovieClick: (FavoriteMovie) 
 @Preview(showBackground = true, device = Devices.TABLET, name = "3. Tablet")
 @Composable
 fun FavoritesScreenPreview() {
+    // To test
     val mockFavorites = listOf(
         FavoriteMovie(title = "Movie 1", overview = "Example overview 1", posterPath = ""),
         FavoriteMovie(title = "Example mov0e 2", overview = "Example overview 2", posterPath = ""),
@@ -142,12 +145,13 @@ fun FavoritesScreenPreview() {
         FavoriteMovie(title = "Example movie 4 with ellipsis", overview = "Example overview 4", posterPath = "")
     )
 
+    //
     Android_Engineer_Technical_AssignmentTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Scaffold(
                 topBar = { TopAppBar(title = { Text("Favourite Movies") }) }
             ) { padding ->
-                LazyVerticalGrid(
+                LazyVerticalGrid( // Lazy Vertical grid to use the full screen width depending on the device
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier.padding(padding),
                     contentPadding = PaddingValues(16.dp),

@@ -40,7 +40,7 @@ interface MovieDao {
      * Get all the movies marked as favourites
      * @return [Flow], reactive array that changes whenever a change is made in the favourite movie
      */
-    @Query("SELECT * FROM favorite_movies") // Select al the movies
+    @Query("SELECT * FROM favorite_movies") // Select all the movies
     fun getAllFavorites(): Flow<List<FavoriteMovie>>
 
     /**
