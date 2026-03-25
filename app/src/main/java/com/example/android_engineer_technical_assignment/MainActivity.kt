@@ -27,10 +27,12 @@ import com.example.android_engineer_technical_assignment.ui.screens.MovieScreen
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
 import com.example.android_engineer_technical_assignment.viewmodel.FavoriteViewModel
 import com.example.android_engineer_technical_assignment.viewmodel.MovieViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
