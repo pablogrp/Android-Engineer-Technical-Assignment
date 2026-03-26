@@ -10,17 +10,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import com.example.android_engineer_technical_assignment.data.AppDatabase
 import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
-import com.example.android_engineer_technical_assignment.data.RetrofitClient
-import com.example.android_engineer_technical_assignment.repository.MovieRepositoryImpl
 import com.example.android_engineer_technical_assignment.ui.screens.DetailScreen
 import com.example.android_engineer_technical_assignment.ui.screens.FavoritesScreen
 import com.example.android_engineer_technical_assignment.ui.screens.MovieScreen
@@ -37,37 +31,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Build the database and the repository
-        // Set fallbackToDestructiveMigration(true) to avoid crashes on schema changes
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "favorites-db"
-        ).fallbackToDestructiveMigration(true)
-            .build()
-
-        val movieRepository = MovieRepositoryImpl(RetrofitClient.apiService, db.movieDao())
-
-        val viewModelFactory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return when {
-                    modelClass.isAssignableFrom(FavoriteViewModel::class.java) -> {
-                        FavoriteViewModel(db.movieDao()) as T
-                    }
-                    modelClass.isAssignableFrom(MovieViewModel::class.java) -> {
-                        MovieViewModel(movieRepository) as T
-                    }
-                    else -> throw IllegalArgumentException("Unknown ViewModel class")
-                }
-            }
-        }
-
         enableEdgeToEdge()
         setContent {
             Android_Engineer_Technical_AssignmentTheme {
                 val navController = rememberNavController()
 
-                val favoriteViewModel: FavoriteViewModel = viewModel(factory = viewModelFactory)
-                val movieViewModel: MovieViewModel = viewModel(factory = viewModelFactory)
+
+                val favoriteViewModel: FavoriteViewModel = hiltViewModel()
+                val movieViewModel: MovieViewModel = hiltViewModel()
 
                 val favorites by favoriteViewModel.favoriteMovies.collectAsState()
 

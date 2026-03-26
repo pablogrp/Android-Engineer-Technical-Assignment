@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_engineer_technical_assignment.data.DB.Movie
 import com.example.android_engineer_technical_assignment.repository.MovieRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 // Represent the different states
 sealed class MovieUiState {
@@ -21,7 +23,8 @@ sealed class MovieUiState {
  * ViewModel that manages the obtainment of the movies from the repository
  * and search filtering logic.
  */
-class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
+@HiltViewModel
+class MovieViewModel @Inject constructor(private val repository: MovieRepository) : ViewModel() {
 
     // Main UI state that the Screen observes
     var uiState: MovieUiState by mutableStateOf(MovieUiState.Loading)

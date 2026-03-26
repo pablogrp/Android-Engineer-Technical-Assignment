@@ -38,6 +38,13 @@ android {
         compose = true
         buildConfig = true
     }
+
+    // Forzamos la resolución de ListenableFuture para evitar el crash al inicio
+    configurations.all {
+        resolutionStrategy {
+            force("com.google.guava:listenablefuture:1.0")
+        }
+    }
 }
 
 kotlin {
@@ -49,11 +56,12 @@ ksp {
 }
 
 dependencies {
-    // Core
+    // Core & Futures (Crítico para evitar el cierre de la app)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-
+    implementation("androidx.concurrent:concurrent-futures:1.2.0")
+    
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -64,28 +72,20 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compiler)
     debugImplementation(libs.androidx.ui.tooling)
 
-    // Navigation
+    // Navigation & Hilt
     implementation(libs.androidx.navigation.compose)
-
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    ksp(libs.androidx.room.compiler)
-
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-
-    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Coil
+    // Otros
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.coil.compose)
 
     // Test

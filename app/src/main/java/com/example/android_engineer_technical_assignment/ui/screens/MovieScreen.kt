@@ -20,11 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
 import com.example.android_engineer_technical_assignment.ui.components.MovieItem
 import com.example.android_engineer_technical_assignment.viewmodel.FavoriteViewModel
@@ -41,8 +39,8 @@ import java.nio.charset.StandardCharsets
 fun MovieScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    movieViewModel: MovieViewModel = viewModel(),
-    favoriteViewModel: FavoriteViewModel = viewModel()
+    movieViewModel: MovieViewModel = hiltViewModel(),
+    favoriteViewModel: FavoriteViewModel = hiltViewModel()
 ) {
 
     val state = movieViewModel.uiState

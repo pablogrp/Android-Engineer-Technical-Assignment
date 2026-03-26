@@ -6,6 +6,7 @@ import com.example.android_engineer_technical_assignment.data.MovieService
 import com.example.android_engineer_technical_assignment.data.Constant
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Interface to define the repository pattern actions
@@ -22,7 +23,7 @@ interface MovieRepository {
  * @param MovieDao moviedao, instance of the database
  */
 
-class MovieRepositoryImpl(private val apiService: MovieService, private val moviedao: MovieDao) : MovieRepository {
+class MovieRepositoryImpl @Inject constructor(private val apiService: MovieService, private val moviedao: MovieDao) : MovieRepository {
 
     /**
      * Get all the movies from the database
