@@ -19,7 +19,19 @@ interface MovieService {
      */
     @GET("movie/top_rated")
     suspend fun getMovies(@Query("api_key") apiKey: String = Constant.API_KEY,
-                          @Query("page") page: Int):MovieResponse // Get the pages of the api
+                          @Query("page") page: Int): MovieResponse // Get the pages of the api
+
+    /**
+     * Search for movies by title
+     * @param apiKey, key to access the API
+     * @param query, the movie title to search for
+     * @return [MovieResponse], object that contains the search results
+     */
+    @GET("search/movie")
+    suspend fun searchMovies(
+        @Query("api_key") apiKey: String = Constant.API_KEY,
+        @Query("query") query: String
+    ): MovieResponse
 }
 
 /**

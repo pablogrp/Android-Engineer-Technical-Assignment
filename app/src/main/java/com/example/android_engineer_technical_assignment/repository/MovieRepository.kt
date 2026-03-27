@@ -16,11 +16,14 @@ interface MovieRepository {
     // API Movies
     suspend fun getMovies(): Flow<List<Movie>>
     suspend fun refreshMovies(page: Int)
+    suspend fun getMovieByTitle(title: String): Movie?
+    suspend fun searchMovieRemote(title: String): Movie?
 
     // Favorite Movies
     fun getAllFavorites(): Flow<List<FavoriteMovie>>
     suspend fun insertFavorite(movie: FavoriteMovie)
     suspend fun deleteFavorite(movie: FavoriteMovie)
+    suspend fun getFavoriteByTitle(title: String): FavoriteMovie?
 }
 
 
@@ -65,6 +68,18 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getMovieByTitle(title: String): Movie? = moviedao.getMovieByTitle(title)
+
+    override suspend fun searchMovieRemote(title: String): Movie? {
+        return try {
+            val response = apiService.searchMovies(query = title)
+            response.results.firstOrNull()
+        } catch (e: Exception) {
+            Log.e("MovieRepository", "Error searching movie by title: $title", e)
+            null
+        }
+    }
+
     // Favorite Movies implementation
     override fun getAllFavorites(): Flow<List<FavoriteMovie>> = moviedao.getAllFavorites()
 
@@ -75,4 +90,6 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun deleteFavorite(movie: FavoriteMovie) {
         moviedao.deleteFavorite(movie)
     }
+
+    override suspend fun getFavoriteByTitle(title: String): FavoriteMovie? = moviedao.getFavoriteByTitle(title)
 }

@@ -153,12 +153,7 @@ fun MovieScreen(
                                         movie = currentMovie,
                                         isFavorite = isFav,
                                         onSeeMoreClick = {
-                                            val cleanPoster = currentMovie.posterpath?.removePrefix("/") ?: "null"
-                                            val encodedOverview = URLEncoder.encode(
-                                                currentMovie.overview ?: "No description",
-                                                StandardCharsets.UTF_8.toString()
-                                            )
-                                            navController.navigate("more_info/${currentMovie.title}/$cleanPoster/$encodedOverview")
+                                            navController.navigate("more_info/${URLEncoder.encode(currentMovie.title ?: "", StandardCharsets.UTF_8.toString())}")
                                         },
                                         onFavoriteClick = {
                                             val favMovie = FavoriteMovie(

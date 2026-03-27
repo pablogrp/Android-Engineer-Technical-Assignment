@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import android.R.attr.navigationIcon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,28 +27,45 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.android_engineer_technical_assignment.ui.components.FavoriteConfirmationDialog
 import com.example.android_engineer_technical_assignment.ui.theme.Android_Engineer_Technical_AssignmentTheme
+import com.example.android_engineer_technical_assignment.viewmodel.DetailViewModel
 
 /**
  * UI screen that shows the details of the movies and allow the "favourite movie" management
- *
- * @param String title, name of the movie
- * @param String posterPath, posterPath URL
- * @param String overview, small description of the movie
- * @param Boolean isFavourite, indicates if the movie is marked as favourite or not
- * @param Unit onToggleFavourite, Callback when the favourite icon is touched
- * @param Unit onBack, Callback to return to the main page
- *
  */
+
+@Composable
+fun DetailScreen(
+    viewModel: DetailViewModel,
+    onBack: () -> Unit
+) {
+    val title = viewModel.title
+    val posterPath by viewModel.posterPath.collectAsState()
+    val overview by viewModel.overview.collectAsState()
+    val isFavorite by viewModel.isFavorite.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    DetailScreenContent(
+        title = title,
+        posterPath = posterPath,
+        overview = overview,
+        isFavorite = isFavorite,
+        isLoading = isLoading,
+        onBack = onBack,
+        onFavoriteClick = { viewModel.toggleFavorite() }
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(title: String,
-                 posterPath: String,
-                 overview: String,
-                 isFavorite: Boolean,
-                 onToggleFavorite: () -> Unit,
-                 onBack: () -> Unit,
-                 onFavoriteClick: () -> Unit) {
+fun DetailScreenContent(
+    title: String,
+    posterPath: String,
+    overview: String,
+    isFavorite: Boolean,
+    isLoading: Boolean,
+    onBack: () -> Unit,
+    onFavoriteClick: () -> Unit
+) {
     var showDialog by remember { mutableStateOf(false) }
 
     FavoriteConfirmationDialog(
@@ -71,71 +88,77 @@ fun DetailScreen(title: String,
                         )
                     }
                 },
-
                 title = {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.headlineSmall, // Letra un poco más pequeña para que quepa bien
+                        style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Center
                     )
                 },
-
                 actions = {
-                    IconButton(onClick = { showDialog = true}) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Add to Favourites",
-                            tint = if (isFavorite) Color.Red else Color.Gray
-                        )
+                    if (!isLoading) {
+                        IconButton(onClick = { showDialog = true }) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = "Add to Favourites",
+                                tint = if (isFavorite) Color.Red else Color.Gray
+                            )
+                        }
                     }
                 }
             )
         }
     ) { padding ->
-        // --- Title and icon section ---
-        Column(
-            modifier = Modifier
-                .fillMaxSize() // takes al the available space pushing the "Return" bottom to the end
-                .padding(padding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()), // Scrollable in case of long overviews
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+                if (posterPath.isNotEmpty() && posterPath != "null") {
+                    val imageUrl = if (posterPath.startsWith("http")) posterPath
+                    else "https://image.tmdb.org/t/p/w500/$posterPath"
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Poster",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(450.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
-            // --- Poster section ---
-            if (posterPath != "null") {
-                val imageUrl = if (posterPath.startsWith("http")) posterPath
-                else "https://image.tmdb.org/t/p/w500/$posterPath"
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = "Poster",
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = overview.ifEmpty { "No overview available." },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(450.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    contentScale = ContentScale.Crop
+                        .background(
+                            MaterialTheme.colorScheme.primaryContainer,
+                            RoundedCornerShape(16.dp)
+                        )
+                        .padding(16.dp),
+                    style = MaterialTheme.typography.bodyLarge
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-
-            // --- Overview Section ---
-            Text(
-                text = overview,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        RoundedCornerShape(16.dp)
-                    )
-                    .padding(16.dp),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -144,12 +167,12 @@ fun DetailScreen(title: String,
 @Composable
 fun DetailScreenPreview() {
     Android_Engineer_Technical_AssignmentTheme {
-        DetailScreen(
+        DetailScreenContent(
             title = "Example movie title",
             posterPath = "",
             overview = "Example movie overview",
             isFavorite = false,
-            onToggleFavorite = {},
+            isLoading = false,
             onBack = {},
             onFavoriteClick = {}
         )

@@ -23,6 +23,18 @@ interface MovieDao {
     fun getAllMovies(): Flow<List<Movie>>
 
     /**
+     * Get a single movie by title from the main movies table
+     */
+    @Query("SELECT * FROM movies WHERE title = :title LIMIT 1")
+    suspend fun getMovieByTitle(title: String): Movie?
+
+    /**
+     * Get a single favorite movie by title
+     */
+    @Query("SELECT * FROM favorite_movies WHERE title = :title LIMIT 1")
+    suspend fun getFavoriteByTitle(title: String): FavoriteMovie?
+
+    /**
      * Save all the movies
      * @param movies, array with the movies
      */
