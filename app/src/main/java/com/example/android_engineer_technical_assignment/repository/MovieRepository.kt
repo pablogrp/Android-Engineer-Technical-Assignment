@@ -1,6 +1,7 @@
 package com.example.android_engineer_technical_assignment.repository
 
 import com.example.android_engineer_technical_assignment.data.DB.Movie
+import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
 import com.example.android_engineer_technical_assignment.data.MovieDao
 import com.example.android_engineer_technical_assignment.data.MovieService
 import com.example.android_engineer_technical_assignment.data.Constant
@@ -12,8 +13,14 @@ import javax.inject.Inject
  * Interface to define the repository pattern actions
  */
 interface MovieRepository {
+    // API Movies
     suspend fun getMovies(): Flow<List<Movie>>
     suspend fun refreshMovies(page: Int)
+
+    // Favorite Movies
+    fun getAllFavorites(): Flow<List<FavoriteMovie>>
+    suspend fun insertFavorite(movie: FavoriteMovie)
+    suspend fun deleteFavorite(movie: FavoriteMovie)
 }
 
 
@@ -23,7 +30,10 @@ interface MovieRepository {
  * @param MovieDao moviedao, instance of the database
  */
 
-class MovieRepositoryImpl @Inject constructor(private val apiService: MovieService, private val moviedao: MovieDao) : MovieRepository {
+class MovieRepositoryImpl @Inject constructor(
+    private val apiService: MovieService, 
+    private val moviedao: MovieDao
+) : MovieRepository {
 
     /**
      * Get all the movies from the database
@@ -53,5 +63,16 @@ class MovieRepositoryImpl @Inject constructor(private val apiService: MovieServi
             Log.e("MovieRepository", "Error fetching movies from API", e)
             throw e
         }
+    }
+
+    // Favorite Movies implementation
+    override fun getAllFavorites(): Flow<List<FavoriteMovie>> = moviedao.getAllFavorites()
+
+    override suspend fun insertFavorite(movie: FavoriteMovie) {
+        moviedao.insertFavorite(movie)
+    }
+
+    override suspend fun deleteFavorite(movie: FavoriteMovie) {
+        moviedao.deleteFavorite(movie)
     }
 }

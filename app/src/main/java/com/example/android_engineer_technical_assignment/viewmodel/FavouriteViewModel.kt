@@ -3,7 +3,7 @@ package com.example.android_engineer_technical_assignment.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
-import com.example.android_engineer_technical_assignment.data.MovieDao
+import com.example.android_engineer_technical_assignment.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -14,12 +14,12 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel that manages favourite movies
- * @property dao Data Access Object to realize action in the DataBase
+ * @property repository Repository to realize action in the DataBase
  */
 @HiltViewModel
-class FavoriteViewModel @Inject constructor(private val dao: MovieDao) : ViewModel() {
+class FavoriteViewModel @Inject constructor(private val repository: MovieRepository) : ViewModel() {
 
-    val favoriteMovies: StateFlow<List<FavoriteMovie>> = dao.getAllFavorites()
+    val favoriteMovies: StateFlow<List<FavoriteMovie>> = repository.getAllFavorites()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
@@ -31,9 +31,9 @@ class FavoriteViewModel @Inject constructor(private val dao: MovieDao) : ViewMod
         viewModelScope.launch(Dispatchers.IO) {
             val isFav = favoriteMovies.value.any { it.title == movie.title }
             if (isFav) {
-                dao.deleteFavorite(movie)
+                repository.deleteFavorite(movie)
             } else {
-                dao.insertFavorite(movie)
+                repository.insertFavorite(movie)
             }
         }
     }
