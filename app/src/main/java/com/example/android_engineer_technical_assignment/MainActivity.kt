@@ -7,8 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -24,8 +22,6 @@ import com.example.android_engineer_technical_assignment.viewmodel.DetailViewMod
 import com.example.android_engineer_technical_assignment.viewmodel.FavoriteViewModel
 import com.example.android_engineer_technical_assignment.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

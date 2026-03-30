@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,18 +37,12 @@ fun DetailScreen(
     viewModel: DetailViewModel,
     onBack: () -> Unit
 ) {
-    val title = viewModel.title
-    val posterPath by viewModel.posterPath.collectAsState()
-    val overview by viewModel.overview.collectAsState()
-    val isFavorite by viewModel.isFavorite.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-
     DetailScreenContent(
-        title = title,
-        posterPath = posterPath,
-        overview = overview,
-        isFavorite = isFavorite,
-        isLoading = isLoading,
+        title = viewModel.title,
+        posterPath = viewModel.posterPath,
+        overview = viewModel.overview,
+        isFavorite = viewModel.isFavorite,
+        isLoading = viewModel.isLoading,
         onBack = onBack,
         onFavoriteClick = { viewModel.toggleFavorite() }
     )
