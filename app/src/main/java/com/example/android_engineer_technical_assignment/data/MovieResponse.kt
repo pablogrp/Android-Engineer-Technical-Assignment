@@ -1,12 +1,22 @@
 package com.example.android_engineer_technical_assignment.data
 
-import com.example.android_engineer_technical_assignment.data.DB.Movie
+import com.google.gson.annotations.SerializedName
+
+// Brings all the information from the API
 
 
 /**
- * Data class for the API movies
- * @property List<Movie> Array with the movies brought by the API
+ * Data class for the API response
  */
 data class MovieResponse(
-    val results: List<Movie>
+    @SerializedName("results") val results: List<MovieDto>
+)
+
+/**
+ * Data Transfer Object for the API
+ */
+data class MovieDto(
+    @SerializedName("title") val title: String,
+    @SerializedName("poster_path") val posterPath: String?,
+    @SerializedName("overview") val overview: String?
 )

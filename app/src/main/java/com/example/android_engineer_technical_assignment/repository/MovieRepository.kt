@@ -5,6 +5,7 @@ import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
 import com.example.android_engineer_technical_assignment.data.MovieDao
 import com.example.android_engineer_technical_assignment.data.MovieService
 import com.example.android_engineer_technical_assignment.data.Constant
+import com.example.android_engineer_technical_assignment.data.MovieDto
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -50,13 +51,19 @@ class MovieRepositoryImpl @Inject constructor(
      */
     override suspend fun refreshMovies(page: Int){
         try {
-            // Explicitly passing the API KEY to ensure it is sent correctly
             val response = apiService.getMovies(apiKey = Constant.API_KEY, page = page)
-            val allMovies = response.results
+            
+            // Map DTOs from network to Room Entities
+            val allMovies = response.results.map { dto ->
+                Movie(
+                    title = dto.title,
+                    posterpath = dto.posterPath,
+                    overview = dto.overview
+                )
+            }
 
             Log.d("MovieRepository", "Fetched ${allMovies.size} movies from API (page $page)")
 
-            // Delete all the old movies to start from 0 only on first page
             if (page == 1) {
                 moviedao.deleteAllMovies()
             }
@@ -73,7 +80,16 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun searchMovieRemote(title: String): Movie? {
         return try {
             val response = apiService.searchMovies(query = title)
-            response.results.firstOrNull()
+            val dto = response.results.firstOrNull()
+            
+            // Map DTO to Room Entity
+            dto?.let {
+                Movie(
+                    title = it.title,
+                    posterpath = it.posterPath,
+                    overview = it.overview
+                )
+            }
         } catch (e: Exception) {
             Log.e("MovieRepository", "Error searching movie by title: $title", e)
             null

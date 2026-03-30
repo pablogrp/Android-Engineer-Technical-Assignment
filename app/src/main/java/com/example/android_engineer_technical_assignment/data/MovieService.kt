@@ -5,6 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+// Connection with the API
 
 /**
  * Interface to define the connection routes with the movie API
@@ -14,18 +15,13 @@ interface MovieService {
 
     /**
      * Get request to take the most popular movies
-     * @param apiKey, key to access the API
-     * @return [MovieResponse], object that contains the array of the movies
      */
     @GET("movie/top_rated")
     suspend fun getMovies(@Query("api_key") apiKey: String = Constant.API_KEY,
-                          @Query("page") page: Int): MovieResponse // Get the pages of the api
+                          @Query("page") page: Int): MovieResponse
 
     /**
      * Search for movies by title
-     * @param apiKey, key to access the API
-     * @param query, the movie title to search for
-     * @return [MovieResponse], object that contains the search results
      */
     @GET("search/movie")
     suspend fun searchMovies(
@@ -41,8 +37,8 @@ interface MovieService {
 object RetrofitClient {
     val apiService: MovieService by lazy {
         Retrofit.Builder()
-            .baseUrl(Constant.BASE_URL) // Connect to the movie API
-            .addConverterFactory(GsonConverterFactory.create()) // Converter from JSON
+            .baseUrl(Constant.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MovieService::class.java)
     }
