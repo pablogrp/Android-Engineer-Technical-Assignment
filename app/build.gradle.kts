@@ -39,7 +39,15 @@ android {
         buildConfig = true
     }
 
-    // Forzamos la resolución de ListenableFuture para evitar el crash al inicio
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+            all {
+                it.useJUnitPlatform()
+            }
+        }
+    }
+
     configurations.all {
         resolutionStrategy {
             force("com.google.guava:listenablefuture:1.0")
@@ -56,7 +64,7 @@ ksp {
 }
 
 dependencies {
-    // Core & Futures (Crítico para evitar el cierre de la app)
+    // Core & Futures
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -95,6 +103,8 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
