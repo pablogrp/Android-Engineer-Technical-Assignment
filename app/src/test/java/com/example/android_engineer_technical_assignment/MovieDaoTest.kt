@@ -52,4 +52,15 @@ class MovieDaoTest {
         Assert.assertEquals(1, movies.size)
         Assert.assertEquals("Example1", movies[0].title)
     }
+
+    // Test to get movie by title
+    @Test
+    fun getMovieByTitle() = runBlocking {
+        val movie = Movie(title = "Example1", posterpath = "", overview = "")
+        dao.insertAll(listOf(movie))
+
+        val result = dao.getMovieByTitle("Example1")
+        Assert.assertNotNull(result)
+        Assert.assertEquals("Example1", result?.title)
+    }
 }
