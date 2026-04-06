@@ -25,7 +25,7 @@ class MovieDaoTest {
     fun createDb(){
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
-            .allowMainThreadQueries() // Robolectric permite esto para simplificar tests
+            .allowMainThreadQueries()
             .build()
         dao = db.movieDao()
     }

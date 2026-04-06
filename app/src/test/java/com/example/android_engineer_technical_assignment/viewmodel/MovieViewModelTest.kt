@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
+
+// Class to test the MovieViewModel
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieViewModelTest {
 
@@ -53,12 +56,13 @@ class MovieViewModelTest {
         assertEquals(movies, (viewModel.uiState as MovieUiState.Success).movies)
     }
 
-    // Test when movies are not observed
+
+    // Test to search with less than 2 characters
     @Test
     fun `searching with less than 2 characters returns all movies`() = runTest {
         val movies = listOf(
-            Movie(title = "Inception", posterpath = "", overview = ""),
-            Movie(title = "Batman", posterpath = "", overview = "")
+            Movie(title = "Example1", posterpath = "", overview = ""),
+            Movie(title = "Example2", posterpath = "", overview = "")
         )
         whenever(repository.getMovies()).thenReturn(flowOf(movies))
         
@@ -76,18 +80,18 @@ class MovieViewModelTest {
     @Test
     fun `searching with 2 or more characters filters movies`() = runTest {
         val movies = listOf(
-            Movie(title = "Inception", posterpath = "", overview = ""),
-            Movie(title = "Batman", posterpath = "", overview = "")
+            Movie(title = "Example1", posterpath = "", overview = ""),
+            Movie(title = "Example2", posterpath = "", overview = "")
         )
         whenever(repository.getMovies()).thenReturn(flowOf(movies))
         
         viewModel = MovieViewModel(repository)
         advanceUntilIdle()
 
-        viewModel.onSearchQueryChange("Bat")
+        viewModel.onSearchQueryChange("le2")
         
         val currentState = viewModel.uiState as MovieUiState.Success
         assertEquals(1, currentState.movies.size)
-        assertEquals("Batman", currentState.movies[0].title)
+        assertEquals("Example2", currentState.movies[0].title)
     }
 }

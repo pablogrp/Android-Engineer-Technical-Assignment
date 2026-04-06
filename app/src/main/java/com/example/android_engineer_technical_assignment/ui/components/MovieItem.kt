@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +51,8 @@ fun MovieItem(
         onClick = onSeeMoreClick,
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .testTag("movie_card_${movie.title}"),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -108,10 +110,15 @@ fun MovieItem(
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag("movie_title_${movie.title}")
                     )
 
-                    IconButton(onClick = { showDialog = true }) {
+                    IconButton(
+                        onClick = { showDialog = true },
+                        modifier = Modifier.testTag("fav_button_${movie.title}")
+                    ) {
                         val scale by animateFloatAsState(
                             targetValue = if (isFavorite) 1.4f else 1.0f,
                             animationSpec = spring(
