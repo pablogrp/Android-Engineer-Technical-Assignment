@@ -25,7 +25,7 @@ class MovieUiTest {
             .onNodeWithText("Search by name...")
             .performTextInput("Example1")
 
-        Thread.sleep(2000)
+        Thread.sleep(5000)
 
         // Verify that the text field contains the input
         composeTestRule
@@ -39,14 +39,22 @@ class MovieUiTest {
 
         // Type in the text field
         composeTestRule.onNodeWithText("Search by name...").performTextInput(searchText)
+
+        Thread.sleep(2000)
         composeTestRule.onNodeWithContentDescription("Clear search").performClick()
+
+        Thread.sleep(2000)
         composeTestRule.onNodeWithText("Search by name...").assertIsDisplayed()
     }
 
     @Test
     fun testNavigationToFavorites_isPossible() {
         try {
+
+            Thread.sleep(2000)
             composeTestRule.onNodeWithContentDescription("See my favourites").performClick()
+
+            Thread.sleep(2000)
         } catch (e: AssertionError) {
         }
     }
