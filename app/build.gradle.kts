@@ -17,7 +17,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.android_engineer_technical_assignment.HiltTestRunner"
 
         val localProperties = Properties()
         val localPropertiesFile = rootProject.file("local.properties")

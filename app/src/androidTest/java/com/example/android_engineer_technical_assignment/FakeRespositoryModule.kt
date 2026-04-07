@@ -8,14 +8,16 @@ import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Singleton
 
-// FakeRepository para tests
+// FakeRepository
 class FakeRepository : MovieRepository {
-    private val avatarMovie = Movie("Avatar", "/avatar.jpg", "Fake Overview")
-    private val _movies = MutableStateFlow(listOf(avatarMovie))
+    private val movie1 = Movie("Avatar", "/avatar.jpg", "Overview 1")
+    private val movie2 = Movie("Inception", "/inception.jpg", "Overview 2")
+    private val movie3 = Movie("Titanic", "/titanic.jpg", "Overview 3")
+    
+    private val _movies = MutableStateFlow(listOf(movie1, movie2, movie3))
     private val _favorites = MutableStateFlow<List<FavoriteMovie>>(emptyList())
 
     override suspend fun getMovies(): Flow<List<Movie>> = _movies
@@ -27,6 +29,7 @@ class FakeRepository : MovieRepository {
         _movies.value.find { it.title == title }
 
     override fun getAllFavorites(): Flow<List<FavoriteMovie>> = _favorites
+
     override suspend fun insertFavorite(movie: FavoriteMovie) {
         _favorites.value = _favorites.value + movie
     }
