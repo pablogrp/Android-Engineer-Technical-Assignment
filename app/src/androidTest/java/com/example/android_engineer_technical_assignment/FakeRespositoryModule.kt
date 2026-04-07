@@ -11,13 +11,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Singleton
 
-// FakeRepository
+// FakeRepository con 10 películas para permitir scroll
 class FakeRepository : MovieRepository {
-    private val movie1 = Movie("Avatar", "/avatar.jpg", "Overview 1")
-    private val movie2 = Movie("Inception", "/inception.jpg", "Overview 2")
-    private val movie3 = Movie("Titanic", "/titanic.jpg", "Overview 3")
+    private val movies = listOf(
+        Movie("Avatar", "/avatar.jpg", "Overview 1"),
+        Movie("Inception", "/inception.jpg", "Overview 2"),
+        Movie("Titanic", "/titanic.jpg", "Overview 3"),
+        Movie("The Matrix", "/matrix.jpg", "Overview 4"),
+        Movie("Interstellar", "/interstellar.jpg", "Overview 5"),
+        Movie("Gladiator", "/gladiator.jpg", "Overview 6"),
+        Movie("Pulp Fiction", "/pulp.jpg", "Overview 7"),
+        Movie("The Dark Knight", "/dark_knight.jpg", "Overview 8"),
+        Movie("The Godfather", "/godfather.jpg", "Overview 9"),
+        Movie("Schindler's List", "/schindler.jpg", "Overview 10")
+    )
     
-    private val _movies = MutableStateFlow(listOf(movie1, movie2, movie3))
+    private val _movies = MutableStateFlow(movies)
     private val _favorites = MutableStateFlow<List<FavoriteMovie>>(emptyList())
 
     override suspend fun getMovies(): Flow<List<Movie>> = _movies

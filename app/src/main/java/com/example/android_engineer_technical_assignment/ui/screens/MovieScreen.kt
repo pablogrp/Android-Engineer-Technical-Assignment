@@ -1,5 +1,10 @@
 package com.example.android_engineer_technical_assignment.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -42,6 +47,11 @@ fun MovieScreen(
     val favorites by favoriteViewModel.favoriteMovies.collectAsState()
     val listState = rememberLazyListState() // to remember which scroll position is the user on
 
+    // to show or hide the FAB
+    val showFab = remember { derivedStateOf{
+        listState.firstVisibleItemIndex > 0
+    }}
+
     val isAtEnd = remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
@@ -65,15 +75,21 @@ fun MovieScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("favorites") },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = Color.Red
+            AnimatedVisibility(
+                visible = showFab.value,
+                enter = scaleIn() + fadeIn(),
+                exit = scaleOut() + fadeOut()
             ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "See my favourites"
-                )
+                FloatingActionButton(
+                    onClick = { navController.navigate("favorites") },
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = Color.Red
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "See my favourites"
+                    )
+                }
             }
         }
     ) { innerPadding ->
