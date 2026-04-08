@@ -1,14 +1,15 @@
 package com.example.android_engineer_technical_assignment.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_engineer_technical_assignment.data.DB.Movie
 import com.example.android_engineer_technical_assignment.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,13 +27,11 @@ sealed class MovieUiState {
 @HiltViewModel
 class MovieViewModel @Inject constructor(private val repository: MovieRepository) : ViewModel() {
 
-    // Main UI state that the Screen observes
-    var uiState: MovieUiState by mutableStateOf(MovieUiState.Loading)
-        private set
+    private val _uiState = MutableStateFlow<MovieUiState>(MovieUiState.Loading)
+    val uiState: StateFlow<MovieUiState> = _uiState.asStateFlow()
 
-    // Holds the current text entered in the search bar
-    var searchQuery by mutableStateOf("")
-        private set
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     // Internal cache to keep the original list for filtering
     private var allMovies: List<Movie> = emptyList()
@@ -70,10 +69,11 @@ class MovieViewModel @Inject constructor(private val repository: MovieRepository
                 repository.refreshMovies(page)
                 Log.d("MovieViewModel", "Movies refreshed successfully for page $page")
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 Log.e("MovieViewModel", "Error refreshing movies", e)
                 // If we have no data at all and the refresh fails, show error
                 if (allMovies.isEmpty()) {
-                    uiState = MovieUiState.Error(e.localizedMessage ?: "Unknown Error")
+                    _uiState.value = MovieUiState.Error(e.localizedMessage ?: "Unknown Error")
                 }
             } finally {
                 isFetchingMore = false
@@ -85,7 +85,7 @@ class MovieViewModel @Inject constructor(private val repository: MovieRepository
      * Change the page and fetch the next page of movies.
      */
     fun loadNextPage(){
-        if (!isFetchingMore && searchQuery.isEmpty()){
+        if (!isFetchingMore && _searchQuery.value.isEmpty()){
             currentPage++
             fetchMovies(currentPage)
         }
@@ -96,7 +96,7 @@ class MovieViewModel @Inject constructor(private val repository: MovieRepository
      * @param newQuery The text to filter movie titles.
      */
     fun onSearchQueryChange(newQuery: String) {
-        searchQuery = newQuery
+        _searchQuery.value = newQuery
         applyFilter()
     }
 
@@ -104,17 +104,15 @@ class MovieViewModel @Inject constructor(private val repository: MovieRepository
      * Applies the search filter to the current list of movies.
      */
     private fun applyFilter() {
-        val filteredList = if (searchQuery.length < 2) {
+        val filteredList = if (_searchQuery.value.length < 2) {
             allMovies
         } else {
             allMovies.filter { movie ->
-                movie.title.contains(searchQuery, ignoreCase = true)
+                movie.title.contains(_searchQuery.value, ignoreCase = true)
             }
         }
 
-        // If we have movies, we show them immediately
-        if (allMovies.isNotEmpty() || uiState !is MovieUiState.Loading) {
-            uiState = MovieUiState.Success(filteredList)
-        }
+        // Fix: Emit Success even if list is empty if we're not loading
+        _uiState.value = MovieUiState.Success(filteredList)
     }
 }

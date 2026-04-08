@@ -1,14 +1,14 @@
 package com.example.android_engineer_technical_assignment.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
 import com.example.android_engineer_technical_assignment.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -32,18 +32,17 @@ class DetailViewModel @Inject constructor(
         ""
     }
 
-    // State for the UI
-    var overview by mutableStateOf("")
-        private set
+    private val _overview = MutableStateFlow("")
+    val overview: StateFlow<String> = _overview.asStateFlow()
 
-    var posterPath by mutableStateOf("")
-        private set
+    private val _posterPath = MutableStateFlow("")
+    val posterPath: StateFlow<String> = _posterPath.asStateFlow()
 
-    var isFavorite by mutableStateOf(false)
-        private set
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
 
-    var isLoading by mutableStateOf(true)
-        private set
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     init {
         checkIfFavorite()
@@ -56,7 +55,7 @@ class DetailViewModel @Inject constructor(
     private fun checkIfFavorite() {
         viewModelScope.launch {
             repository.getAllFavorites().collect { list ->
-                isFavorite = list.any { it.title == title }
+                _isFavorite.value = list.any { it.title == title }
             }
         }
     }
@@ -66,31 +65,31 @@ class DetailViewModel @Inject constructor(
      */
     private fun loadDetails() {
         viewModelScope.launch {
-            isLoading = true
+            _isLoading.value = true
 
             // 1. Check local data
             val movie = repository.getMovieByTitle(title)
             if (movie != null) {
-                overview = movie.overview ?: ""
-                posterPath = movie.posterpath?.removePrefix("/") ?: ""
+                _overview.value = movie.overview ?: ""
+                _posterPath.value = movie.posterpath?.removePrefix("/") ?: ""
             }
 
             // 2. If it is empty, check favorites or API
-            if (overview.isEmpty()) {
+            if (_overview.value.isEmpty()) {
                 val fav = repository.getFavoriteByTitle(title)
                 if (fav != null) {
-                    overview = fav.overview
-                    posterPath = fav.posterPath.removePrefix("/")
+                    _overview.value = fav.overview
+                    _posterPath.value = fav.posterPath.removePrefix("/")
                 } else {
                     // Last option: search in the API
                     val remote = repository.searchMovieRemote(title)
                     if (remote != null) {
-                        overview = remote.overview ?: ""
-                        posterPath = remote.posterpath?.removePrefix("/") ?: ""
+                        _overview.value = remote.overview ?: ""
+                        _posterPath.value = remote.posterpath?.removePrefix("/") ?: ""
                     }
                 }
             }
-            isLoading = false
+            _isLoading.value = false
         }
     }
 
@@ -99,8 +98,8 @@ class DetailViewModel @Inject constructor(
      */
     fun toggleFavorite() {
         viewModelScope.launch {
-            val movie = FavoriteMovie(title, posterPath, overview)
-            if (isFavorite) {
+            val movie = FavoriteMovie(title, _posterPath.value, _overview.value)
+            if (_isFavorite.value) {
                 repository.deleteFavorite(movie)
             } else {
                 repository.insertFavorite(movie)

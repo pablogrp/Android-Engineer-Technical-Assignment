@@ -5,7 +5,6 @@ import com.example.android_engineer_technical_assignment.data.DB.FavoriteMovie
 import com.example.android_engineer_technical_assignment.data.MovieDao
 import com.example.android_engineer_technical_assignment.data.MovieService
 import com.example.android_engineer_technical_assignment.data.Constant
-import com.example.android_engineer_technical_assignment.data.MovieDto
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -15,7 +14,7 @@ import javax.inject.Inject
  */
 interface MovieRepository {
     // API Movies
-    suspend fun getMovies(): Flow<List<Movie>>
+    fun getMovies(): Flow<List<Movie>>
     suspend fun refreshMovies(page: Int)
     suspend fun getMovieByTitle(title: String): Movie?
     suspend fun searchMovieRemote(title: String): Movie?
@@ -27,13 +26,11 @@ interface MovieRepository {
     suspend fun getFavoriteByTitle(title: String): FavoriteMovie?
 }
 
-
 /**
  * Implementation of the repository pattern
  * @param MovieService apiService, instance of the API
  * @param MovieDao moviedao, instance of the database
  */
-
 class MovieRepositoryImpl @Inject constructor(
     private val apiService: MovieService, 
     private val moviedao: MovieDao
@@ -43,7 +40,7 @@ class MovieRepositoryImpl @Inject constructor(
      * Get all the movies from the database
      * @return [Flow], array that changes when a change is made in the favourite movie
      */
-    override suspend fun getMovies(): Flow<List<Movie>> = moviedao.getAllMovies()
+    override fun getMovies(): Flow<List<Movie>> = moviedao.getAllMovies()
 
     /**
      * Refresh the movies to the database
@@ -53,7 +50,6 @@ class MovieRepositoryImpl @Inject constructor(
         try {
             val response = apiService.getMovies(apiKey = Constant.API_KEY, page = page)
             
-            // Map DTOs from network to Room Entities
             val allMovies = response.results.map { dto ->
                 Movie(
                     title = dto.title,
@@ -82,7 +78,6 @@ class MovieRepositoryImpl @Inject constructor(
             val response = apiService.searchMovies(query = title)
             val dto = response.results.firstOrNull()
             
-            // Map DTO to Room Entity
             dto?.let {
                 Movie(
                     title = it.title,
@@ -96,7 +91,6 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    // Favorite Movies implementation
     override fun getAllFavorites(): Flow<List<FavoriteMovie>> = moviedao.getAllFavorites()
 
     override suspend fun insertFavorite(movie: FavoriteMovie) {
